@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Music Website</title>
+    <style>
+        /* Reset some default styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.login-container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+}
+
+.login-container h1 {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 95%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+p {
+    margin-top: 20px;
+}
+
+p a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+p a:hover {
+    text-decoration: underline;
+}
+
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Email id or username</label> 
+                 <input type="email" id="email" name="email" required>
+                <!-- <label for="username">Mobile No or username</label>
+                <input type="text" id="mobile" name="mobile" required>  -->
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" id="btn" class="btn">Login</button>
+        </form>
+        <p><a href="forgot.html">forgot password</a></p>
+        <p>Don't have an account? <a href="index.html">Register here</a></p>
+    </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+       event.preventDefault();
+
+       const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+  fetch("http://localhost:3000/login", {
+      method: "POST",
+      crossDomain: true,
+      headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({
+          email,
+          password
+      }),
+  })
+  .then((res) => res.json())
+  .then((data) => {
+    //  console.log(data, "userRegister");
+      if (data.status === "ok") {
+          alert("Login successful!");
+          window.localStorage.setItem("token",data.data);
+          window.localStorage.setItem("loggedIn",true,);
+          window.location.href="ind.html";
+      } 
+      else if(data.status === "errorr"){
+          alert("User not exists.");
+      }
+      else if(data.status === "error2"){
+          alert("Invalid Password.");
+      }
+      else {
+          alert("Login failed! Please try again.");
+      }
+  })
+  .catch((error) => {
+      console.error("Error:", error);
+      alert("An error occurred. Please try again.");
+  });
+});
+
+    </script>
+    
+</body>
+</html>

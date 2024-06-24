@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .user-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        #btn{
+            background-color: rgb(139, 76, 76);
+            color:white;
+           padding: 10px 10px;
+           cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="user-container" id="userct">
+        <h2>User Details</h2>
+        <div id="userDetails"></div>
+        <button id="btn">Log Out</button>
+
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          fetch("http://localhost:3000/userdetails", {
+                method: "POST",
+                crossDomain: true,
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                },
+                body: JSON.stringify({
+                    token: window.localStorage.getItem("token"),
+                }),
+            })
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.status === "ok") {
+                    const inf=data.data;
+                    const userDetails = document.getElementById('userDetails');
+                    const emailElement = document.createElement('p');
+                    const nameElement = document.createElement('p');
+                    // const btn=document.createElement('button');
+                    // btn.className="btn";
+                    // btn.innerHTML="Log Out";
+                  //  btn.onclick="{btnclick()}";
+                    emailElement.innerHTML = `Email: ${inf.email}`;
+                  nameElement.innerHTML = `Name: ${inf.fname} ${inf.lname}`;
+                  userDetails.appendChild(nameElement);
+                    userDetails.appendChild(emailElement);
+                    userDetails.appendChild(btn);
+
+                }else if(data.status==="error1"){
+                    //console.error("Failed to retrieve user details:", data);
+                    alert("Invalid Token login again");
+                    window.localStorage.clear();
+                     window.localStorage.setItem("loggedIn",false);
+                     window.location.href="login.html";
+
+                }
+                 else {
+                    console.error("Failed to retrieve user details:", data);
+                    alert("Failed to retrieve user details.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
+            });
+        });
+        const btn=document.getElementById('btn');
+                    btn.addEventListener('click',()=>{
+                     window.localStorage.clear();
+                     window.localStorage.setItem("loggedIn",false);
+                     window.location.href="login.html";
+
+                    });
+    </script>
+</body>
+</html>
